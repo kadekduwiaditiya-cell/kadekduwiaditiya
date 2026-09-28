@@ -1,1 +1,1 @@
-window.KEUANGANKU_API_URL="";
+window.KEUANGANKU_API_URL="https://keuanganku-api.workers.dev";
