@@ -40,7 +40,7 @@ async function createExpense(request,env){
 async function listTransactions(request,env){
   const uid=await authenticate(request,env);
   const base=firestoreBase(env,uid)+"/transactions";
-  const r=await fetch(base+"?pageSize=100&orderBy=-createdAt",{headers:{authorization:"Bearer "+await serviceAccessToken(env)}});
+  const r=await fetch(base+"?pageSize=100&orderBy=createdAt%20desc",{headers:{authorization:"Bearer "+await serviceAccessToken(env)}});
   if(!r.ok) throw new Error("Firestore read gagal: "+await r.text());
   const data=await r.json();
   const docs=(data.documents||[]).map(d=>fromFirestore(d));
@@ -77,7 +77,7 @@ async function serviceAccessToken(env){
   const key=await crypto.subtle.importKey("pkcs8",pemBytes(env.GCP_PRIVATE_KEY),{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
   const sig=await crypto.subtle.sign("RSASSA-PKCS1-v1_5",key,new TextEncoder().encode(unsigned));
   const jwt=unsigned+"."+b64u(sig);
-  const r=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer,assertion:"+jwt}).toString()});
+  const r=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion:jwt}).toString()});
   if(!r.ok)throw new Error("OAuth service account gagal: "+await r.text());
   return (await r.json()).access_token;
 }
