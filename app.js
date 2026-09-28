@@ -47,7 +47,7 @@ function renderTargets(){
 function modal(title,body,onSave){
   $('modalTitle').textContent=title; $('modalBody').innerHTML=body; $('modal').showModal();
   const submit=e=>{e.preventDefault();onSave();$('modal').close();$('modalForm').removeEventListener('submit',submit)};
-  $('modalForm').addEventListener('submit',submit);
+  $('modalForm').onsubmit=submit;
 }
 $('closeModal').onclick=$('cancelModal').onclick=()=>$('modal').close();
 $('salaryBtn').onclick=()=>modal('input gaji','<label>nominal gaji bulan ini</label><input id="v" type="number" min="0" value="'+(state.salary||'')+'" required placeholder="5000000">',()=>{state.salary=Number($('v').value);save();render()});
